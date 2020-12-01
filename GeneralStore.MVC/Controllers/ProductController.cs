@@ -12,10 +12,31 @@ namespace GeneralStore.MVC.Controllers
         // Add the application DB Context (link to the database)
         private ApplicationDbContext _db = new ApplicationDbContext();
 
-        // GET: Product
+        // GET: Products
         public ActionResult Index()
         {
             return View(_db.Products.ToList());
+        }
+
+        // GET: Product
+        public ActionResult Create()
+        {
+            return View(new Product());
+        }
+
+        // POST: Product
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(Product product)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Products.Add(product);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View(product);
         }
     }
 }
