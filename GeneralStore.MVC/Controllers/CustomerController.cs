@@ -80,7 +80,7 @@ namespace GeneralStore.MVC.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             Customer customer = _db.Customers.Find(id);
@@ -116,7 +116,7 @@ namespace GeneralStore.MVC.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             Customer customer = _db.Customers.Find(id);
