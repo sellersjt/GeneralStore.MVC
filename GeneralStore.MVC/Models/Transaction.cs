@@ -20,6 +20,7 @@ namespace GeneralStore.MVC.Models
         public int ProductId { get; set; }
         public virtual Product Product { get; set; }
 
+        [Display(Name = "Transaction Date")]
         public DateTimeOffset TransactionDateUtc { get; set; } = DateTimeOffset.Now;
     }
 }
