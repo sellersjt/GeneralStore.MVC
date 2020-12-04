@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -12,7 +13,7 @@ namespace GeneralStore.MVC.Controllers
         // Add the application DB Context (link to the database)
         private ApplicationDbContext _db = new ApplicationDbContext();
 
-        // GET: Transaction
+        // GET: Transactions
         public ActionResult Index()
         {
             List<Transaction> transactionList = _db.Transactions.ToList();
@@ -58,6 +59,39 @@ namespace GeneralStore.MVC.Controllers
             }
 
             return View(viewModel);
+        }
+
+        // GET: Delete
+        // Transaction/Delete/{id}
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Transaction transaction = _db.Transactions.Find(id);
+
+            if (transaction == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(transaction);
+        }
+
+        // POST: Delete
+        // Transaction/Delete/{id}
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(Transaction model)
+        {
+            var transaction = _db.Transactions.Find(model.TransactionId);
+
+            _db.Transactions.Remove(transaction);
+            _db.SaveChanges();
+
+            return RedirectToAction("Index");
         }
     }
 }
