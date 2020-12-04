@@ -19,8 +19,5 @@ namespace GeneralStore.MVC.Models
 
         // Selected customer
         public int CustomerId { get; set; }
-
-        // Transaction Date
-        public DateTimeOffset TransactionDateUtc { get; set; }
     }
 }
