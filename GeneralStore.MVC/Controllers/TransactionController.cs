@@ -1,6 +1,7 @@
 ﻿using GeneralStore.MVC.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -92,6 +93,69 @@ namespace GeneralStore.MVC.Controllers
             _db.SaveChanges();
 
             return RedirectToAction("Index");
+        }
+
+        // GET: Edit
+        // Transaction/Edit/{id}
+        public ActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Transaction transaction = _db.Transactions.Find(id);
+
+            if (transaction == null)
+            {
+                return HttpNotFound();
+            }
+
+            var viewModel = new EditTransactionViewModel();
+
+            viewModel.Products = _db.Products.Select(p => new SelectListItem
+            {
+                Text = p.Name,
+                Value = p.ProductId.ToString()
+            });
+
+            viewModel.Customers = _db.Customers.Select(c => new SelectListItem
+            {
+                Text = c.FirstName + " " + c.LastName,
+                Value = c.CustomerId.ToString()
+            });
+
+            viewModel.TransactionId = transaction.TransactionId;
+            viewModel.CustomerId = transaction.CustomerId;
+            viewModel.ProductId = transaction.ProductId;
+            viewModel.TransactionDateUtc = transaction.TransactionDateUtc;
+
+            return View(viewModel);
+        }
+
+        // POST: Edit
+        // Transaction/Edit/{id}
+        [HttpPost, ActionName("Edit")]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(EditTransactionViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                Transaction transaction = new Transaction
+                {
+                    TransactionId = viewModel.TransactionId,
+                    CustomerId = viewModel.CustomerId,
+                    ProductId = viewModel.ProductId,
+                    TransactionDateUtc = viewModel.TransactionDateUtc
+                };
+
+                _db.Entry(transaction).State = EntityState.Modified;
+                _db.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+
+            return View(viewModel);
         }
     }
 }
