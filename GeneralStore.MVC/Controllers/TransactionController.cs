@@ -24,22 +24,40 @@ namespace GeneralStore.MVC.Controllers
         // GET: Transaction
         public ActionResult Create()
         {
-            return View(new Transaction());
+            var viewModel = new CreateTransactionViewModel();
+
+            viewModel.Products = _db.Products.Select(p => new SelectListItem
+            {
+                Text = p.Name,
+                Value = p.ProductId.ToString()
+            });
+
+            viewModel.Customers = _db.Customers.Select(c => new SelectListItem
+            {
+                Text = c.FirstName + " " + c.LastName,
+                Value = c.CustomerId.ToString()
+            });
+
+            return View(viewModel);
         }
 
         // POST: Transaction
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Transaction transaction)
+        public ActionResult Create(CreateTransactionViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                _db.Transactions.Add(transaction);
+                _db.Transactions.Add(new Transaction
+                {
+                    CustomerId = viewModel.CustomerId,
+                    ProductId = viewModel.ProductId
+                });
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(transaction);
+            return View(viewModel);
         }
     }
 }
