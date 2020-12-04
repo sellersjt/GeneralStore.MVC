@@ -128,7 +128,6 @@ namespace GeneralStore.MVC.Controllers
             viewModel.TransactionId = transaction.TransactionId;
             viewModel.CustomerId = transaction.CustomerId;
             viewModel.ProductId = transaction.ProductId;
-            viewModel.TransactionDateUtc = transaction.TransactionDateUtc;
 
             return View(viewModel);
         }
@@ -141,13 +140,10 @@ namespace GeneralStore.MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                Transaction transaction = new Transaction
-                {
-                    TransactionId = viewModel.TransactionId,
-                    CustomerId = viewModel.CustomerId,
-                    ProductId = viewModel.ProductId,
-                    TransactionDateUtc = viewModel.TransactionDateUtc
-                };
+                Transaction transaction = _db.Transactions.Find(viewModel.TransactionId);
+
+                transaction.CustomerId = viewModel.CustomerId;
+                transaction.ProductId = viewModel.ProductId;
 
                 _db.Entry(transaction).State = EntityState.Modified;
                 _db.SaveChanges();
@@ -156,6 +152,25 @@ namespace GeneralStore.MVC.Controllers
             }
 
             return View(viewModel);
+        }
+
+        // GET: Details
+        // Transaction/Details/{id}
+        public ActionResult Details(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Transaction transaction = _db.Transactions.Find(id);
+
+            if (transaction == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(transaction);
         }
     }
 }
